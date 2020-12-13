@@ -94,6 +94,8 @@ task buildDummy(type: GradleBuild) {
     startParameter.projectProperties = ['isDummyBuild': 'true']
 }
 
+task buildAll() {}
+
 buildAll.dependsOn('build')
 buildAll.finalizedBy('buildDummy')
 
