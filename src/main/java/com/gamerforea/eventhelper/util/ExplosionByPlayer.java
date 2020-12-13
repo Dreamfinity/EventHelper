@@ -25,47 +25,31 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public final class ExplosionByPlayer extends Explosion
-{
+public final class ExplosionByPlayer extends Explosion {
 	private final EntityPlayer player;
 	private final World world;
 	private final Map<EntityPlayer, Vec3> playerKnockbackMap = new HashMap<>();
 
-	public ExplosionByPlayer(
-			@Nonnull GameProfile modFakeProfile,
-			@Nullable EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size)
-	{
+	public ExplosionByPlayer(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size) {
 		this(player == null ? exploder instanceof EntityPlayer ? (EntityPlayer) exploder : FastUtils.getFake(world, modFakeProfile) : player, world, exploder, x, y, z, size);
 	}
 
-	public ExplosionByPlayer(
-			@Nonnull FakePlayer modFake,
-			@Nullable EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size)
-	{
+	public ExplosionByPlayer(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size) {
 		this(player == null ? exploder instanceof EntityPlayer ? (EntityPlayer) exploder : modFake : player, world, exploder, x, y, z, size);
 	}
 
-	public ExplosionByPlayer(
-			@Nonnull FakePlayerContainer fake,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size)
-	{
+	public ExplosionByPlayer(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size) {
 		this(fake.get(), world, exploder, x, y, z, size);
 	}
 
-	public ExplosionByPlayer(
-			@Nonnull EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size)
-	{
+	public ExplosionByPlayer(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size) {
 		super(world, exploder, x, y, z, size);
 		this.world = world;
 		this.player = player;
 	}
 
 	@Override
-	public final void doExplosionA()
-	{
+	public final void doExplosionA() {
 		if (!EventHelper.explosions)
 			return;
 
@@ -81,21 +65,19 @@ public final class ExplosionByPlayer extends Explosion
 		List<Entity> entities = this.world.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
 		Vec3 vec3 = Vec3.createVectorHelper(this.explosionX, this.explosionY, this.explosionZ);
 
-		for (Entity entity : entities)
-		{
+		for (Entity entity : entities) {
 			double distance = entity.getDistance(this.explosionX, this.explosionY, this.explosionZ) / this.explosionSize;
 
-			if (distance <= 1)
-			{
+			if (distance <= 1) {
 				double distanceX = entity.posX - this.explosionX;
 				double distanceY = entity.posY + entity.getEyeHeight() - this.explosionY;
 				double distanceZ = entity.posZ - this.explosionZ;
 				double distance1 = MathHelper.sqrt_double(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
 
-				if (distance1 != 0)
-				{
-					if (EventUtils.cantDamage(this.player, entity))
+				if (distance1 != 0) {
+					if (EventUtils.cantDamage(this.player, entity)) {
 						continue;
+					}
 
 					distanceX /= distance1;
 					distanceY /= distance1;
@@ -108,8 +90,7 @@ public final class ExplosionByPlayer extends Explosion
 					entity.motionY += distanceY * d6;
 					entity.motionZ += distanceZ * d6;
 
-					if (entity instanceof EntityPlayer)
-					{
+					if (entity instanceof EntityPlayer) {
 						EntityPlayer player = (EntityPlayer) entity;
 						this.playerKnockbackMap.put(player, Vec3.createVectorHelper(distanceX * d5, distanceY * d5, distanceZ * d5));
 					}
@@ -120,17 +101,12 @@ public final class ExplosionByPlayer extends Explosion
 		this.explosionSize = size;
 	}
 
-	private Set<ChunkPosition> getPositions()
-	{
+	private Set<ChunkPosition> getPositions() {
 		Set<ChunkPosition> set = new HashSet<>();
-		for (int i = 0; i < 16; ++i)
-		{
-			for (int j = 0; j < 16; ++j)
-			{
-				for (int k = 0; k < 16; ++k)
-				{
-					if (i == 0 || i == 15 || j == 0 || j == 15 || k == 0 || k == 15)
-					{
+		for (int i = 0; i < 16; ++i) {
+			for (int j = 0; j < 16; ++j) {
+				for (int k = 0; k < 16; ++k) {
+					if (i == 0 || i == 15 || j == 0 || j == 15 || k == 0 || k == 15) {
 						double distanceX = i / 30F - 1F;
 						double distanceY = j / 30F - 1F;
 						double distanceZ = k / 30F - 1F;
@@ -143,22 +119,21 @@ public final class ExplosionByPlayer extends Explosion
 						double dY = this.explosionY;
 						double dZ = this.explosionZ;
 
-						for (float f = 0.3F; size > 0F; size -= f * 0.75F)
-						{
+						for (float f = 0.3F; size > 0F; size -= f * 0.75F) {
 							int x = MathHelper.floor_double(dX);
 							int y = MathHelper.floor_double(dY);
 							int z = MathHelper.floor_double(dZ);
 							Block block = this.world.getBlock(x, y, z);
 
-							if (block.getMaterial() != Material.air)
-							{
+							if (block.getMaterial() != Material.air) {
 								float resistance = this.exploder != null ? this.exploder.func_145772_a(this, this.world, x, y, z, block) : block.getExplosionResistance(this.exploder, this.world, x, y, z, this.explosionX, this.explosionY, this.explosionZ);
 								size -= (resistance + 0.3F) * f;
 							}
 
 							if (size > 0 && (this.exploder == null || this.exploder.func_145774_a(this, this.world, x, y, z, block, size)))
-								if (!EventUtils.cantBreak(this.player, x, y, z))
+								if (!EventUtils.cantBreak(this.player, x, y, z)) {
 									set.add(new ChunkPosition(x, y, z));
+								}
 
 							dX += distanceX * f;
 							dY += distanceY * f;
@@ -172,87 +147,51 @@ public final class ExplosionByPlayer extends Explosion
 	}
 
 	@Override
-	public final Map func_77277_b()
-	{
+	public final Map func_77277_b() {
 		return this.playerKnockbackMap;
 	}
 
-	public static ExplosionByPlayer createExplosion(
-			@Nonnull GameProfile modFakeProfile,
-			@Nullable EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke)
-	{
+	public static ExplosionByPlayer createExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
 		return newExplosion(modFakeProfile, player, world, exploder, x, y, z, size, false, smoke);
 	}
 
-	public static ExplosionByPlayer createExplosion(
-			@Nonnull FakePlayer modFake,
-			@Nullable EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke)
-	{
+	public static ExplosionByPlayer createExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
 		return newExplosion(modFake, player, world, exploder, x, y, z, size, false, smoke);
 	}
 
 	@Nonnull
-	public static ExplosionByPlayer createExplosion(
-			@Nonnull FakePlayerContainer fake,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke)
-	{
+	public static ExplosionByPlayer createExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
 		return newExplosion(fake, world, exploder, x, y, z, size, false, smoke);
 	}
 
 	@Nonnull
-	public static ExplosionByPlayer createExplosion(
-			@Nonnull EntityPlayer player,
-			@Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke)
-	{
+	public static ExplosionByPlayer createExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
 		return newExplosion(player, world, exploder, x, y, z, size, false, smoke);
 	}
 
-	public static ExplosionByPlayer newExplosion(
-			@Nonnull GameProfile modFakeProfile,
-			@Nullable EntityPlayer player,
-			@Nonnull World world,
-			@Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke)
-	{
+	public static ExplosionByPlayer newExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
 		ExplosionByPlayer explosion = new ExplosionByPlayer(modFakeProfile, player, world, exploder, x, y, z, size);
 		return newExplosion(explosion, world, x, y, z, size, flame, smoke);
 	}
 
-	public static ExplosionByPlayer newExplosion(
-			@Nonnull FakePlayer modFake,
-			@Nullable EntityPlayer player,
-			@Nonnull World world,
-			@Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke)
-	{
+	public static ExplosionByPlayer newExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
 		ExplosionByPlayer explosion = new ExplosionByPlayer(modFake, player, world, exploder, x, y, z, size);
 		return newExplosion(explosion, world, x, y, z, size, flame, smoke);
 	}
 
 	@Nonnull
-	public static ExplosionByPlayer newExplosion(
-			@Nonnull FakePlayerContainer fake,
-			@Nonnull World world,
-			@Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke)
-	{
+	public static ExplosionByPlayer newExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
 		ExplosionByPlayer explosion = new ExplosionByPlayer(fake, world, exploder, x, y, z, size);
 		return newExplosion(explosion, world, x, y, z, size, flame, smoke);
 	}
 
 	@Nonnull
-	public static ExplosionByPlayer newExplosion(
-			@Nonnull EntityPlayer player,
-			@Nonnull World world,
-			@Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke)
-	{
+	public static ExplosionByPlayer newExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
 		ExplosionByPlayer explosion = new ExplosionByPlayer(player, world, exploder, x, y, z, size);
 		return newExplosion(explosion, world, x, y, z, size, flame, smoke);
 	}
 
-	private static ExplosionByPlayer newExplosion(
-			@Nonnull ExplosionByPlayer explosion,
-			@Nonnull World world, double x, double y, double z, float size, boolean flame, boolean smoke)
-	{
+	private static ExplosionByPlayer newExplosion(@Nonnull ExplosionByPlayer explosion, @Nonnull World world, double x, double y, double z, float size, boolean flame, boolean smoke) {
 		explosion.isFlaming = flame;
 		explosion.isSmoking = smoke;
 
@@ -263,15 +202,15 @@ public final class ExplosionByPlayer extends Explosion
 		explosion.doExplosionA();
 		explosion.doExplosionB(!isServerWorld);
 
-		if (isServerWorld)
-		{
-			if (!smoke)
+		if (isServerWorld) {
+			if (!smoke) {
 				explosion.affectedBlockPositions.clear();
+			}
 
-			for (EntityPlayer target : (Iterable<EntityPlayer>) world.playerEntities)
-			{
-				if (target.getDistanceSq(x, y, z) < 4096)
+			for (EntityPlayer target : (Iterable<EntityPlayer>) world.playerEntities) {
+				if (target.getDistanceSq(x, y, z) < 4096) {
 					((EntityPlayerMP) target).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, size, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(target)));
+				}
 			}
 		}
 

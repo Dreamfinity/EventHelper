@@ -10,57 +10,51 @@ import gnu.trove.map.hash.TObjectLongHashMap;
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
-public class CooldownManager<T>
-{
+public class CooldownManager<T> {
 	private final TObjectLongMap<T> cooldowns = new TObjectLongHashMap<>();
 	private final long cooldown;
 
-	public CooldownManager(long cooldown, @Nonnull TimeUnit timeUnit)
-	{
+	public CooldownManager(long cooldown, @Nonnull TimeUnit timeUnit) {
 		this(cooldown <= 0 ? 0 : timeUnit.toSeconds(cooldown) * 20);
 	}
 
-	public CooldownManager(long cooldownInTicks)
-	{
+	public CooldownManager(long cooldownInTicks) {
 		this.cooldown = Math.max(0, cooldownInTicks);
-		if (this.cooldown > 0)
+		if (this.cooldown > 0) {
 			FMLCommonHandler.instance().bus().register(this);
+		}
 	}
 
-	public boolean canAdd(@Nonnull T key)
-	{
+	public boolean canAdd(@Nonnull T key) {
 		return this.cooldown <= 0 || !this.cooldowns.containsKey(key);
 	}
 
-	public boolean add(@Nonnull T key)
-	{
+	public boolean add(@Nonnull T key) {
 		if (this.cooldown <= 0)
 			return true;
-		if (this.canAdd(key))
-		{
+		if (this.canAdd(key)) {
 			this.cooldowns.put(key, this.cooldown);
 			return true;
 		}
 		return false;
 	}
 
-	public long getCooldown(@Nonnull T key)
-	{
+	public long getCooldown(@Nonnull T key) {
 		return this.cooldown <= 0 ? 0 : this.cooldowns.get(key);
 	}
 
 	@SubscribeEvent
-	public void onTick(TickEvent.ServerTickEvent event)
-	{
-		if (event.phase == TickEvent.Phase.END)
-			for (TObjectLongIterator<T> iterator = this.cooldowns.iterator(); iterator.hasNext(); )
-			{
+	public void onTick(TickEvent.ServerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			for (TObjectLongIterator<T> iterator = this.cooldowns.iterator(); iterator.hasNext();) {
 				iterator.advance();
 				long timer = iterator.value() - 1;
-				if (timer <= 0)
+				if (timer <= 0) {
 					iterator.remove();
-				else
+				} else {
 					iterator.setValue(timer);
+				}
 			}
+		}
 	}
 }

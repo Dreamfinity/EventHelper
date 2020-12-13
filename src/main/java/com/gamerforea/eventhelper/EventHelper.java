@@ -27,10 +27,8 @@ import java.util.List;
 
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
-@SideOnly(Side.SERVER)
 @Mod(modid = "EventHelper", name = "EventHelper", version = "@VERSION@", acceptableRemoteVersions = "*")
-public final class EventHelper
-{
+public final class EventHelper {
 	public static final Logger LOGGER = LogManager.getLogger("EventHelper");
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
@@ -39,14 +37,12 @@ public final class EventHelper
 	public static boolean debug = true;
 
 	@EventHandler
-	public void onServerStart(FMLServerStartingEvent event)
-	{
+	public void onServerStart(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandReloadAllConfigs());
 	}
 
 	@EventHandler
-	public final void serverStarted(FMLServerStartedEvent event)
-	{
+	public final void serverStarted(FMLServerStartedEvent event) {
 		Configuration cfg = ConfigUtils.getConfig("EventHelper");
 		String c = CATEGORY_GENERAL;
 		String[] plugins = cfg.getStringList("plugins", c, new String[] { "WorldGuard", "GriefPreventionPlus" }, "Plugins for sending events");
@@ -57,39 +53,36 @@ public final class EventHelper
 		cfg.save();
 
 		PluginManager plManager = Bukkit.getPluginManager();
-		for (String plName : plugins)
-		{
+		for (String plName : plugins) {
 			Plugin plugin = plManager.getPlugin(plName);
-			if (plugin == null)
+			if (plugin == null) {
 				LOGGER.warn("Plugin {} not found!", plName);
-			else
+			} else {
 				listeners.addAll(HandlerList.getRegisteredListeners(plugin));
+			}
 		}
-		if (pluginHooking)
+		if (pluginHooking) {
 			InjectionManager.init();
+		}
 	}
 
-	public static void callEvent(Event event)
-	{
-		for (RegisteredListener listener : listeners)
-		{
-			try
-			{
+	public static void callEvent(Event event) {
+		for (RegisteredListener listener : listeners) {
+			try {
 				listener.callEvent(event);
-			}
-			catch (Throwable throwable)
-			{
-				if (debug)
+			} catch (Throwable throwable) {
+				if (debug) {
 					LOGGER.error("Failed event call", throwable);
+				}
 			}
 		}
 	}
 
-	public static void error(Throwable throwable, String message, Object... args)
-	{
-		if (debug)
+	public static void error(Throwable throwable, String message, Object... args) {
+		if (debug) {
 			LOGGER.error(new FormattedMessage(message, args), throwable);
-		else
+		} else {
 			LOGGER.error(message, args);
+		}
 	}
 }

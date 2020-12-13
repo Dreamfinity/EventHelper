@@ -25,35 +25,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-public final class FastUtils
-{
+public final class FastUtils {
 	@Deprecated
 	@Nonnull
-	public static Configuration getConfig(@Nonnull String cfgName)
-	{
+	public static Configuration getConfig(@Nonnull String cfgName) {
 		return ConfigUtils.getConfig(cfgName);
 	}
 
-	public static void stopPotionEffect(@Nonnull EntityLivingBase entity, @Nonnull Potion potion)
-	{
+	public static void stopPotionEffect(@Nonnull EntityLivingBase entity, @Nonnull Potion potion) {
 		stopPotionEffect(entity.getActivePotionEffect(potion));
 	}
 
-	public static void stopPotionEffect(@Nullable PotionEffect potionEffect)
-	{
-		if (potionEffect != null && potionEffect.getDuration() > 0)
+	public static void stopPotionEffect(@Nullable PotionEffect potionEffect) {
+		if (potionEffect != null && potionEffect.getDuration() > 0) {
 			ReflectionHelper.setPrivateValue(PotionEffect.class, potionEffect, 0, "field_76460_b", "duration");
+		}
 	}
 
-	public static <T extends TileEntity> boolean setProfile(
-			@Nonnull World world, int x, int y, int z,
-			@Nonnull Entity entity, Class<T> tileClass, Function<T, FakePlayerContainer> mapper)
-	{
-		if (entity instanceof EntityPlayer && world.blockExists(x, y, z))
-		{
+	public static <T extends TileEntity> boolean setProfile(@Nonnull World world, int x, int y, int z, @Nonnull Entity entity, Class<T> tileClass, Function<T, FakePlayerContainer> mapper) {
+		if (entity instanceof EntityPlayer && world.blockExists(x, y, z)) {
 			TileEntity tile = world.getTileEntity(x, y, z);
-			if (tile != null && tileClass.isInstance(tile))
-			{
+			if (tile != null && tileClass.isInstance(tile)) {
 				FakePlayerContainer fake = mapper.apply((T) tile);
 				fake.setProfile(entity);
 				return true;
@@ -62,13 +54,11 @@ public final class FastUtils
 		return false;
 	}
 
-	public static boolean isOnline(@Nonnull EntityPlayer player)
-	{
+	public static boolean isOnline(@Nonnull EntityPlayer player) {
 		if (player instanceof FakePlayer)
 			return true;
 
-		for (EntityPlayer playerOnline : (Iterable<EntityPlayer>) getServer().getConfigurationManager().playerEntityList)
-		{
+		for (EntityPlayer playerOnline : (Iterable<EntityPlayer>) getServer().getConfigurationManager().playerEntityList) {
 			if (playerOnline.equals(player))
 				return true;
 		}
@@ -76,18 +66,15 @@ public final class FastUtils
 		return false;
 	}
 
-	public static boolean isValidRealPlayer(@Nullable EntityPlayer player)
-	{
+	public static boolean isValidRealPlayer(@Nullable EntityPlayer player) {
 		return isValidRealPlayer(player, true);
 	}
 
-	public static boolean isValidRealPlayer(@Nullable EntityPlayer player, boolean checkAlive)
-	{
+	public static boolean isValidRealPlayer(@Nullable EntityPlayer player, boolean checkAlive) {
 		if (player == null || player instanceof FakePlayer)
 			return false;
 
-		if (player instanceof EntityPlayerMP)
-		{
+		if (player instanceof EntityPlayerMP) {
 			NetHandlerPlayServer connection = ((EntityPlayerMP) player).playerNetServerHandler;
 			if (connection == null || !connection.func_147362_b().isChannelOpen())
 				return false;
@@ -97,45 +84,38 @@ public final class FastUtils
 	}
 
 	@Nonnull
-	public static FakePlayer getFake(@Nullable World world, @Nonnull FakePlayer fake)
-	{
+	public static FakePlayer getFake(@Nullable World world, @Nonnull FakePlayer fake) {
 		fake.worldObj = world == null ? getEntityWorld() : world;
 		return fake;
 	}
 
 	@Nonnull
-	public static FakePlayer getFake(@Nullable World world, @Nonnull GameProfile profile)
-	{
+	public static FakePlayer getFake(@Nullable World world, @Nonnull GameProfile profile) {
 		return getFake(world, FakePlayerFactory.get((WorldServer) (world == null ? getEntityWorld() : world), profile));
 	}
 
 	@Nonnull
-	public static EntityPlayer getLivingPlayer(@Nullable EntityLivingBase entity, @Nonnull FakePlayer modFake)
-	{
+	public static EntityPlayer getLivingPlayer(@Nullable EntityLivingBase entity, @Nonnull FakePlayer modFake) {
 		return entity instanceof EntityPlayer ? (EntityPlayer) entity : getFake(entity == null ? null : entity.worldObj, modFake);
 	}
 
 	@Nonnull
-	public static EntityPlayer getLivingPlayer(@Nullable EntityLivingBase entity, @Nonnull GameProfile modFakeProfile)
-	{
+	public static EntityPlayer getLivingPlayer(@Nullable EntityLivingBase entity, @Nonnull GameProfile modFakeProfile) {
 		return entity instanceof EntityPlayer ? (EntityPlayer) entity : getFake(entity == null ? null : entity.worldObj, modFakeProfile);
 	}
 
 	@Nonnull
-	public static EntityPlayer getThrowerPlayer(@Nullable EntityThrowable entity, @Nonnull FakePlayer modFake)
-	{
+	public static EntityPlayer getThrowerPlayer(@Nullable EntityThrowable entity, @Nonnull FakePlayer modFake) {
 		return getLivingPlayer(entity == null ? null : entity.getThrower(), modFake);
 	}
 
 	@Nonnull
-	public static EntityPlayer getThrowerPlayer(@Nullable EntityThrowable entity, @Nonnull GameProfile modFakeProfile)
-	{
+	public static EntityPlayer getThrowerPlayer(@Nullable EntityThrowable entity, @Nonnull GameProfile modFakeProfile) {
 		return getLivingPlayer(entity == null ? null : entity.getThrower(), modFakeProfile);
 	}
 
 	@Nonnull
-	public static EntityLivingBase getThrower(@Nullable EntityThrowable entity, @Nonnull FakePlayer modFake)
-	{
+	public static EntityLivingBase getThrower(@Nullable EntityThrowable entity, @Nonnull FakePlayer modFake) {
 		if (entity == null)
 			return getFake(getEntityWorld(), modFake);
 		EntityLivingBase thrower = entity.getThrower();
@@ -143,8 +123,7 @@ public final class FastUtils
 	}
 
 	@Nonnull
-	public static EntityLivingBase getThrower(@Nullable EntityThrowable entity, @Nonnull GameProfile modFakeProfile)
-	{
+	public static EntityLivingBase getThrower(@Nullable EntityThrowable entity, @Nonnull GameProfile modFakeProfile) {
 		if (entity == null)
 			return getFake(getEntityWorld(), modFakeProfile);
 		EntityLivingBase thrower = entity.getThrower();
@@ -152,14 +131,12 @@ public final class FastUtils
 	}
 
 	@Nonnull
-	private static MinecraftServer getServer()
-	{
+	private static MinecraftServer getServer() {
 		return FMLCommonHandler.instance().getMinecraftServerInstance();
 	}
 
 	@Nonnull
-	private static World getEntityWorld()
-	{
+	private static World getEntityWorld() {
 		return getServer().getEntityWorld();
 	}
 }

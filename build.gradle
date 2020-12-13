@@ -24,20 +24,17 @@ repositories {
 apply plugin: 'forge'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
-version = "1.7.10-1.13.1"
-group= "com.gamerforea"
-archivesBaseName = "EventHelper"
-
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-	sourceCompatibility = targetCompatibility = '1.8'
-}
+version = mod_version
+group = mod_group
+archivesBaseName = mod_archives_name
 
 minecraft {
 	version = "1.7.10-10.13.4.1614-1.7.10"
 	runDir = "eclipse"
 	replace "@VERSION@", project.version
+	replace 'BuildController.internalDummyBuildState()', isDummyBuild
 }
 
 dependencies {
@@ -47,9 +44,44 @@ dependencies {
 	compile name: 'GriefPreventionPlus-13.3'
 }
 
+processResources {
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version,
+		'mod_id': mod_id,
+		'mod_name': mod_name,
+		'mod_author': mod_author,
+		'mod_description': mod_description,
+		'isDummyBuild': isDummyBuild,
+		'mc_version': mc_version,
+		'mod_version': mod_version,
+		'mod_icon': mod_icon
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
 task devJar(type: Jar) {
-	classifier = 'dev'
+	if (isDummyBuild.toBoolean()) {
+		classifier = 'dummydev'
+	} else {
+		classifier = 'dev'
+	}
+	
 	from sourceSets.main.output
+}
+
+jar {
+	doFirst {
+		if (isDummyBuild.toBoolean()) {
+			classifier = 'dummyorigin'
+		} else {
+			classifier = 'origin'
+		}
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -57,7 +89,19 @@ task sourcesJar(type: Jar) {
 	from sourceSets.main.allSource
 }
 
+task buildDummy(type: GradleBuild) {
+    tasks = ['build']
+    startParameter.projectProperties = ['isDummyBuild': 'true']
+}
+
+buildAll.dependsOn('build')
+buildAll.finalizedBy('buildDummy')
+
+
 artifacts {
 	archives devJar
-	archives sourcesJar
+	
+	if (!isDummyBuild.toBoolean()) {
+		archives sourcesJar
+	}
 }
