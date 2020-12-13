@@ -15,17 +15,17 @@ public class DummyPluginInjection implements PluginInjection {
 	}
 
 	@Override
-	public boolean isInPrivate(World world, int x, int y, int z) {
+	public boolean isInPrivate(Object world, int x, int y, int z) {
 		return false;
 	}
 
 	@Override
-	public boolean isPrivateMember(Player player, int x, int y, int z) {
+	public boolean isPrivateMember(Object player, int x, int y, int z) {
 		return true;
 	}
 
 	@Override
-	public boolean isPrivateOwner(Player player, int x, int y, int z) {
+	public boolean isPrivateOwner(Object player, int x, int y, int z) {
 		return true;
 	}
 

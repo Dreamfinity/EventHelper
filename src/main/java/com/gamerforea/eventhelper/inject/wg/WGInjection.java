@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static com.integral.eventhelperultimate.BuildController.isDummyBuild;
 
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public final class WGInjection {
@@ -31,11 +32,11 @@ public final class WGInjection {
 
 	public static final class Inj implements PluginInjection {
 		@Override
-		public boolean isInPrivate(World world, int x, int y, int z) {
+		public boolean isInPrivate(Object world, int x, int y, int z) {
 			if (isDummyBuild)
 				return false;
 
-			for (ProtectedRegion region : WorldGuardPlugin.inst().getRegionManager(world).getApplicableRegions(new Vector(x, y, z))) {
+			for (ProtectedRegion region : WorldGuardPlugin.inst().getRegionManager((World) world).getApplicableRegions(new Vector(x, y, z))) {
 				if (!region.getId().equals(ProtectedRegion.GLOBAL_REGION))
 					return true;
 			}
@@ -43,21 +44,21 @@ public final class WGInjection {
 		}
 
 		@Override
-		public boolean isPrivateMember(Player player, int x, int y, int z) {
+		public boolean isPrivateMember(Object player, int x, int y, int z) {
 			if (isDummyBuild)
 				return true;
 
 			WorldGuardPlugin wg = WorldGuardPlugin.inst();
-			return wg.getRegionManager(player.getWorld()).getApplicableRegions(new Vector(x, y, z)).isMemberOfAll(wg.wrapPlayer(player, true));
+			return wg.getRegionManager(((Player)player).getWorld()).getApplicableRegions(new Vector(x, y, z)).isMemberOfAll(wg.wrapPlayer((Player) player, true));
 		}
 
 		@Override
-		public boolean isPrivateOwner(Player player, int x, int y, int z) {
+		public boolean isPrivateOwner(Object player, int x, int y, int z) {
 			if (isDummyBuild)
 				return true;
 
 			WorldGuardPlugin wg = WorldGuardPlugin.inst();
-			return wg.getRegionManager(player.getWorld()).getApplicableRegions(new Vector(x, y, z)).isOwnerOfAll(wg.wrapPlayer(player, true));
+			return wg.getRegionManager(((Player)player).getWorld()).getApplicableRegions(new Vector(x, y, z)).isOwnerOfAll(wg.wrapPlayer((Player) player, true));
 		}
 	}
 }

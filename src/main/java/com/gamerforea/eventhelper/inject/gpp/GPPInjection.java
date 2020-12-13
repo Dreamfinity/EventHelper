@@ -34,17 +34,17 @@ public final class GPPInjection {
 
 	public static final class Inj implements PluginInjection {
 		@Override
-		public boolean isInPrivate(World world, int x, int y, int z) {
+		public boolean isInPrivate(Object world, int x, int y, int z) {
 			if (isDummyBuild)
 				return false;
 
 			GriefPreventionPlus plugin = GriefPreventionPlus.getInstance();
-			Claim claim = plugin.getDataStore().getClaimAt(new Location(world, x, y, z), false);
+			Claim claim = plugin.getDataStore().getClaimAt(new Location((World) world, x, y, z), false);
 			return claim != null;
 		}
 
 		@Override
-		public boolean isPrivateMember(Player player, int x, int y, int z) {
+		public boolean isPrivateMember(Object player, int x, int y, int z) {
 			if (isDummyBuild)
 				return true;
 
@@ -52,13 +52,13 @@ public final class GPPInjection {
 		}
 
 		@Override
-		public boolean isPrivateOwner(Player player, int x, int y, int z) {
+		public boolean isPrivateOwner(Object player, int x, int y, int z) {
 			if (isDummyBuild)
 				return true;
 
 			GriefPreventionPlus plugin = GriefPreventionPlus.getInstance();
-			Claim claim = plugin.getDataStore().getClaimAt(new Location(player.getWorld(), x, y, z), false);
-			return claim != null && player.getUniqueId().equals(claim.getOwnerID());
+			Claim claim = plugin.getDataStore().getClaimAt(new Location(((Player)player).getWorld(), x, y, z), false);
+			return claim != null && ((Player)player).getUniqueId().equals(claim.getOwnerID());
 		}
 	}
 }
