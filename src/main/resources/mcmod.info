@@ -1,10 +1,8 @@
 [{
   "modid": "${mod_id}",
   "name": "${mod_name}",
-  "description": "${mod_description}
-  
-  Dummy Build: ${isDummyBuild}
-  ",
+  "description": "${mod_description}",
+  "isDummyBuild": "${isDummyBuild}",
   "version": "${mod_version}",
   "mcversion": "${mc_version}",
   "url": "",
