@@ -1,0 +1,97 @@
+plugins {
+    kotlin("jvm") version "2.1.20" apply true
+    id("java")
+    id("forge") version "1.2-1.1.+"
+}
+
+repositories {
+    flatDir {
+        dirs("lib")
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+//val version: String by project
+//val group: String by project
+//val isDummyBuild: Boolean by project
+//println("version: $version, group: $group, isDummyBuild: $isDummyBuild")
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "idea"
+//    replace("@VERSION@", project.version)
+//    replace("BuildController.internalDummyBuildState()", isDummyBuild)
+}
+
+dependencies {
+//    implementation(":bukkit:1.7.10")
+//    implementation(":worldedit:6.1")
+//    implementation(":worldguard:6.1")
+//    implementation(":GriefPreventionPlus:13.3")
+}
+
+//processResources {
+//    from(sourceSets.main.resources) {
+//        println(sourceSets.main.resources)
+//        exclude("mcmod.info")
+////        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+////        include "mcmod.info"
+////        expand "version": project.version,
+////                "mod_id": mod_id,
+////                "mod_name": mod_name,
+////                "mod_author": mod_author,
+////                "mod_description": mod_description,
+////                "isDummyBuild": isDummyBuild,
+////                "mc_version": mc_version,
+////                "mod_version": mod_version,
+////                "mod_icon": mod_icon,
+////                "mod_credits": mod_credits
+//    }
+//}
+
+tasks.register("devJar", Jar::class) {
+//    if (isDummyBuild.toBoolean()) {
+//        archiveClassifier = "dummydev"
+//    } else {
+//        archiveClassifier = "dev"
+//    }
+
+//    from(sourceSets.main.output)
+}
+
+//jar {
+//    doFirst {
+//        if (isDummyBuild.toBoolean()) {
+//            archiveClassifier = "dummyorigin"
+//        } else {
+//            archiveClassifier = "origin"
+//        }
+//    }
+//}
+
+tasks.register("sourcesJar", Jar::class) {
+    archiveClassifier = "sources"
+//    from(sourceSets.main.allSource)
+}
+
+tasks.register("buildDummy", GradleBuild::class) {
+//    it.group = "build"
+//    startParameter.projectProperties = ["isDummyBuild": "true"]
+}
+
+tasks.register("buildAll") {
+//    it.dependsOn("build")
+//    it.finalizedBy("buildDummy")
+}
+
+
+artifacts {
+//    archives(devJar)
+//    if (!isDummyBuild.toBoolean()) {
+//        archives(sourcesJar)
+//    }
+}

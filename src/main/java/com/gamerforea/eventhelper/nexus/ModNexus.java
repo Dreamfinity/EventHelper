@@ -7,9 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ModNexus
-{
-	String name();
+public @interface ModNexus {
+    String name();
 
-	String uuid() default "";
+    String uuid() default "";
 }

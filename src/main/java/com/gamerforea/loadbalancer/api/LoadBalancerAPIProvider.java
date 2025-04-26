@@ -10,27 +10,24 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
-final class LoadBalancerAPIProvider
-{
-	private static ILoadBalancerAPI loadBalancerAPI;
+final class LoadBalancerAPIProvider {
+    private static ILoadBalancerAPI loadBalancerAPI;
 
-	public static ILoadBalancerAPI getLoadBalancerAPI()
-	{
-		if (loadBalancerAPI != null)
-			return loadBalancerAPI;
+    public static ILoadBalancerAPI getLoadBalancerAPI() {
+        if (loadBalancerAPI != null)
+            return loadBalancerAPI;
 
-		Logger logger = LogManager.getLogger("LoadBalancerAPIProvider");
-		ServiceLoader<ILoadBalancerAPI> serviceLoader = ServiceLoader.load(ILoadBalancerAPI.class);
-		List<ILoadBalancerAPI> implementations = Lists.newArrayList(serviceLoader);
+        Logger logger = LogManager.getLogger("LoadBalancerAPIProvider");
+        ServiceLoader<ILoadBalancerAPI> serviceLoader = ServiceLoader.load(ILoadBalancerAPI.class);
+        List<ILoadBalancerAPI> implementations = Lists.newArrayList(serviceLoader);
 
-		if (implementations.isEmpty())
-		{
-			logger.warn("LoadBalancerAPI implementation not found. Fallback to dummy implementation");
-			return loadBalancerAPI = DummyLoadBalancerAPI.INSTANCE;
-		}
+        if (implementations.isEmpty()) {
+            logger.warn("LoadBalancerAPI implementation not found. Fallback to dummy implementation");
+            return loadBalancerAPI = DummyLoadBalancerAPI.INSTANCE;
+        }
 
-		ILoadBalancerAPI implementation = Collections.max(implementations, Comparator.comparingInt(ILoadBalancerAPI::getPriority));
-		logger.warn("LoadBalancerAPI implementation found: " + implementation.getClass().getName());
-		return loadBalancerAPI = implementation;
-	}
+        ILoadBalancerAPI implementation = Collections.max(implementations, Comparator.comparingInt(ILoadBalancerAPI::getPriority));
+        logger.warn("LoadBalancerAPI implementation found: " + implementation.getClass().getName());
+        return loadBalancerAPI = implementation;
+    }
 }

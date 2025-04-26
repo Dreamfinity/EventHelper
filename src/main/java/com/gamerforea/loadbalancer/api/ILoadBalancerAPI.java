@@ -4,18 +4,16 @@ import com.gamerforea.loadbalancer.api.meter.ITickMeter;
 import com.gamerforea.loadbalancer.api.meter.ITickMeterView;
 import com.gamerforea.loadbalancer.api.skip.ITickSkipStrategyBuilder;
 
-public interface ILoadBalancerAPI
-{
-	ITickMeterView getServerTickMeter();
+public interface ILoadBalancerAPI {
+    ITickMeterView getServerTickMeter();
 
-	ITickMeter createTickMeter();
+    ITickMeter createTickMeter();
 
-	ITickSkipStrategyBuilder createTickSkipStrategyBuilder();
+    ITickSkipStrategyBuilder createTickSkipStrategyBuilder();
 
-	int getPriority();
+    int getPriority();
 
-	static ILoadBalancerAPI getInstance()
-	{
-		return LoadBalancerAPIProvider.getLoadBalancerAPI();
-	}
+    static ILoadBalancerAPI getInstance() {
+        return LoadBalancerAPIProvider.getLoadBalancerAPI();
+    }
 }

@@ -13,43 +13,36 @@ import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
 
-public final class ModNexusFactory
-{
-	private final GameProfile modFakeProfile;
+public final class ModNexusFactory {
+    private final GameProfile modFakeProfile;
 
-	public ModNexusFactory(@Nonnull GameProfile modFakeProfile)
-	{
-		Preconditions.checkArgument(modFakeProfile.isComplete(), "modFakeProfile is incomplete");
-		this.modFakeProfile = modFakeProfile;
-	}
+    public ModNexusFactory(@Nonnull GameProfile modFakeProfile) {
+        Preconditions.checkArgument(modFakeProfile.isComplete(), "modFakeProfile is incomplete");
+        this.modFakeProfile = modFakeProfile;
+    }
 
-	@Nonnull
-	public GameProfile getProfile()
-	{
-		return this.modFakeProfile;
-	}
+    @Nonnull
+    public GameProfile getProfile() {
+        return this.modFakeProfile;
+    }
 
-	@Nonnull
-	public FakePlayer getFake(@Nonnull World world)
-	{
-		return FastUtils.getFake(world, this.modFakeProfile);
-	}
+    @Nonnull
+    public FakePlayer getFake(@Nonnull World world) {
+        return FastUtils.getFake(world, this.modFakeProfile);
+    }
 
-	@Nonnull
-	public FakePlayerContainerEntity wrapFake(@Nonnull Entity entity)
-	{
-		return new FakePlayerContainerEntity(this.modFakeProfile, entity);
-	}
+    @Nonnull
+    public FakePlayerContainerEntity wrapFake(@Nonnull Entity entity) {
+        return new FakePlayerContainerEntity(this.modFakeProfile, entity);
+    }
 
-	@Nonnull
-	public FakePlayerContainerTileEntity wrapFake(@Nonnull TileEntity tile)
-	{
-		return new FakePlayerContainerTileEntity(this.modFakeProfile, tile);
-	}
+    @Nonnull
+    public FakePlayerContainerTileEntity wrapFake(@Nonnull TileEntity tile) {
+        return new FakePlayerContainerTileEntity(this.modFakeProfile, tile);
+    }
 
-	@Nonnull
-	public FakePlayerContainerWorld wrapFake(@Nonnull World world)
-	{
-		return new FakePlayerContainerWorld(this.modFakeProfile, world);
-	}
+    @Nonnull
+    public FakePlayerContainerWorld wrapFake(@Nonnull World world) {
+        return new FakePlayerContainerWorld(this.modFakeProfile, world);
+    }
 }

@@ -1,12 +1,9 @@
 .git
 .gradle
 .settings
+.idea
 bin
-build/c*
-build/d*
-build/r*
-build/s*
-build/t*
+build/
 eclipse
 .classpath
 .project

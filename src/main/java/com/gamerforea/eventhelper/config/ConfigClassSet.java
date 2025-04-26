@@ -9,15 +9,14 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ConfigClassSet
-{
-	String name() default "";
+public @interface ConfigClassSet {
+    String name() default "";
 
-	String category() default Configuration.CATEGORY_GENERAL;
+    String category() default Configuration.CATEGORY_GENERAL;
 
-	String comment() default "";
+    String comment() default "";
 
-	String oldName() default "";
+    String oldName() default "";
 
-	String oldCategory() default "";
+    String oldCategory() default "";
 }

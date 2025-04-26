@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Config
-{
-	String name() default "";
+public @interface Config {
+    String name() default "";
 }

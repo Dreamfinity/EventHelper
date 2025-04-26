@@ -9,19 +9,18 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ConfigFloat
-{
-	String name() default "";
+public @interface ConfigFloat {
+    String name() default "";
 
-	String category() default Configuration.CATEGORY_GENERAL;
+    String category() default Configuration.CATEGORY_GENERAL;
 
-	String comment() default "";
+    String comment() default "";
 
-	float min() default Float.MIN_VALUE;
+    float min() default Float.MIN_VALUE;
 
-	float max() default Float.MAX_VALUE;
+    float max() default Float.MAX_VALUE;
 
-	String oldName() default "";
+    String oldName() default "";
 
-	String oldCategory() default "";
+    String oldCategory() default "";
 }
