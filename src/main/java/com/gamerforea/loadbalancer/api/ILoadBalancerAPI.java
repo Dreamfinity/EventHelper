@@ -5,6 +5,10 @@ import com.gamerforea.loadbalancer.api.meter.ITickMeterView;
 import com.gamerforea.loadbalancer.api.skip.ITickSkipStrategyBuilder;
 
 public interface ILoadBalancerAPI {
+    static ILoadBalancerAPI getInstance() {
+        return LoadBalancerAPIProvider.getLoadBalancerAPI();
+    }
+
     ITickMeterView getServerTickMeter();
 
     ITickMeter createTickMeter();
@@ -12,8 +16,4 @@ public interface ILoadBalancerAPI {
     ITickSkipStrategyBuilder createTickSkipStrategyBuilder();
 
     int getPriority();
-
-    static ILoadBalancerAPI getInstance() {
-        return LoadBalancerAPIProvider.getLoadBalancerAPI();
-    }
 }

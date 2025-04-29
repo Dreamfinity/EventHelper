@@ -48,6 +48,72 @@ public final class ExplosionByPlayer extends Explosion {
         this.player = player;
     }
 
+    public static ExplosionByPlayer createExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
+        return newExplosion(modFakeProfile, player, world, exploder, x, y, z, size, false, smoke);
+    }
+
+    public static ExplosionByPlayer createExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
+        return newExplosion(modFake, player, world, exploder, x, y, z, size, false, smoke);
+    }
+
+    @Nonnull
+    public static ExplosionByPlayer createExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
+        return newExplosion(fake, world, exploder, x, y, z, size, false, smoke);
+    }
+
+    @Nonnull
+    public static ExplosionByPlayer createExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
+        return newExplosion(player, world, exploder, x, y, z, size, false, smoke);
+    }
+
+    public static ExplosionByPlayer newExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
+        ExplosionByPlayer explosion = new ExplosionByPlayer(modFakeProfile, player, world, exploder, x, y, z, size);
+        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
+    }
+
+    public static ExplosionByPlayer newExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
+        ExplosionByPlayer explosion = new ExplosionByPlayer(modFake, player, world, exploder, x, y, z, size);
+        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
+    }
+
+    @Nonnull
+    public static ExplosionByPlayer newExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
+        ExplosionByPlayer explosion = new ExplosionByPlayer(fake, world, exploder, x, y, z, size);
+        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
+    }
+
+    @Nonnull
+    public static ExplosionByPlayer newExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
+        ExplosionByPlayer explosion = new ExplosionByPlayer(player, world, exploder, x, y, z, size);
+        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
+    }
+
+    private static ExplosionByPlayer newExplosion(@Nonnull ExplosionByPlayer explosion, @Nonnull World world, double x, double y, double z, float size, boolean flame, boolean smoke) {
+        explosion.isFlaming = flame;
+        explosion.isSmoking = smoke;
+
+        if (ForgeEventFactory.onExplosionStart(world, explosion))
+            return explosion;
+
+        boolean isServerWorld = world instanceof WorldServer;
+        explosion.doExplosionA();
+        explosion.doExplosionB(!isServerWorld);
+
+        if (isServerWorld) {
+            if (!smoke) {
+                explosion.affectedBlockPositions.clear();
+            }
+
+            for (EntityPlayer target : (Iterable<EntityPlayer>) world.playerEntities) {
+                if (target.getDistanceSq(x, y, z) < 4096) {
+                    ((EntityPlayerMP) target).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, size, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(target)));
+                }
+            }
+        }
+
+        return explosion;
+    }
+
     @Override
     public void doExplosionA() {
         if (!EventHelper.explosions)
@@ -149,71 +215,5 @@ public final class ExplosionByPlayer extends Explosion {
     @Override
     public Map func_77277_b() {
         return this.playerKnockbackMap;
-    }
-
-    public static ExplosionByPlayer createExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
-        return newExplosion(modFakeProfile, player, world, exploder, x, y, z, size, false, smoke);
-    }
-
-    public static ExplosionByPlayer createExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
-        return newExplosion(modFake, player, world, exploder, x, y, z, size, false, smoke);
-    }
-
-    @Nonnull
-    public static ExplosionByPlayer createExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
-        return newExplosion(fake, world, exploder, x, y, z, size, false, smoke);
-    }
-
-    @Nonnull
-    public static ExplosionByPlayer createExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean smoke) {
-        return newExplosion(player, world, exploder, x, y, z, size, false, smoke);
-    }
-
-    public static ExplosionByPlayer newExplosion(@Nonnull GameProfile modFakeProfile, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
-        ExplosionByPlayer explosion = new ExplosionByPlayer(modFakeProfile, player, world, exploder, x, y, z, size);
-        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
-    }
-
-    public static ExplosionByPlayer newExplosion(@Nonnull FakePlayer modFake, @Nullable EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
-        ExplosionByPlayer explosion = new ExplosionByPlayer(modFake, player, world, exploder, x, y, z, size);
-        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
-    }
-
-    @Nonnull
-    public static ExplosionByPlayer newExplosion(@Nonnull FakePlayerContainer fake, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
-        ExplosionByPlayer explosion = new ExplosionByPlayer(fake, world, exploder, x, y, z, size);
-        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
-    }
-
-    @Nonnull
-    public static ExplosionByPlayer newExplosion(@Nonnull EntityPlayer player, @Nonnull World world, @Nullable Entity exploder, double x, double y, double z, float size, boolean flame, boolean smoke) {
-        ExplosionByPlayer explosion = new ExplosionByPlayer(player, world, exploder, x, y, z, size);
-        return newExplosion(explosion, world, x, y, z, size, flame, smoke);
-    }
-
-    private static ExplosionByPlayer newExplosion(@Nonnull ExplosionByPlayer explosion, @Nonnull World world, double x, double y, double z, float size, boolean flame, boolean smoke) {
-        explosion.isFlaming = flame;
-        explosion.isSmoking = smoke;
-
-        if (ForgeEventFactory.onExplosionStart(world, explosion))
-            return explosion;
-
-        boolean isServerWorld = world instanceof WorldServer;
-        explosion.doExplosionA();
-        explosion.doExplosionB(!isServerWorld);
-
-        if (isServerWorld) {
-            if (!smoke) {
-                explosion.affectedBlockPositions.clear();
-            }
-
-            for (EntityPlayer target : (Iterable<EntityPlayer>) world.playerEntities) {
-                if (target.getDistanceSq(x, y, z) < 4096) {
-                    ((EntityPlayerMP) target).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, size, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(target)));
-                }
-            }
-        }
-
-        return explosion;
     }
 }

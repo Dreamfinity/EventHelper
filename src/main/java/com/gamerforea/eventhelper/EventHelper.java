@@ -34,6 +34,32 @@ public final class EventHelper {
     public static boolean explosions = true;
     public static boolean debug = true;
 
+    public static void callEvent(Object event) {
+        if (BuildController.isDummyBuild)
+            return;
+
+
+        for (Object listener : listeners) {
+            try {
+                if (event instanceof Event && listener instanceof RegisteredListener) {
+                    ((RegisteredListener) listener).callEvent((Event) event);
+                }
+            } catch (Throwable throwable) {
+                if (debug) {
+                    LOGGER.error("Failed event call", throwable);
+                }
+            }
+        }
+    }
+
+    public static void error(Throwable throwable, String message, Object... args) {
+        if (debug) {
+            LOGGER.error(new FormattedMessage(message, args), throwable);
+        } else {
+            LOGGER.error(message, args);
+        }
+    }
+
     @EventHandler
     public void onServerStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandReloadAllConfigs());
@@ -64,32 +90,6 @@ public final class EventHelper {
 
         if (pluginHooking) {
             InjectionManager.init();
-        }
-    }
-
-    public static void callEvent(Object event) {
-        if (BuildController.isDummyBuild)
-            return;
-
-
-        for (Object listener : listeners) {
-            try {
-                if (event instanceof Event && listener instanceof RegisteredListener) {
-                    ((RegisteredListener) listener).callEvent((Event) event);
-                }
-            } catch (Throwable throwable) {
-                if (debug) {
-                    LOGGER.error("Failed event call", throwable);
-                }
-            }
-        }
-    }
-
-    public static void error(Throwable throwable, String message, Object... args) {
-        if (debug) {
-            LOGGER.error(new FormattedMessage(message, args), throwable);
-        } else {
-            LOGGER.error(message, args);
         }
     }
 }

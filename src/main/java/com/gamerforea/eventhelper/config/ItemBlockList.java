@@ -35,6 +35,26 @@ public final class ItemBlockList {
             this.addRaw(Arrays.asList(DEFAULT_VALUES));
     }
 
+    private static <K> boolean put(Map<K, TIntSet> map, K key, int value) {
+        TIntSet set = map.get(key);
+        if (set == null)
+            map.put(key, set = new TIntHashSet());
+        return set.add(value);
+    }
+
+    private static <K> boolean contains(Map<K, TIntSet> map, K key, int value) {
+        TIntSet set = map.get(key);
+        return set != null && (set.contains(value) || set.contains(ALL_META));
+    }
+
+    private static int safeParseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Throwable throwable) {
+            return ALL_META;
+        }
+    }
+
     public void clear() {
         this.loaded = true;
         this.items.clear();
@@ -98,26 +118,6 @@ public final class ItemBlockList {
                     }
                 }
             }
-        }
-    }
-
-    private static <K> boolean put(Map<K, TIntSet> map, K key, int value) {
-        TIntSet set = map.get(key);
-        if (set == null)
-            map.put(key, set = new TIntHashSet());
-        return set.add(value);
-    }
-
-    private static <K> boolean contains(Map<K, TIntSet> map, K key, int value) {
-        TIntSet set = map.get(key);
-        return set != null && (set.contains(value) || set.contains(ALL_META));
-    }
-
-    private static int safeParseInt(String s) {
-        try {
-            return Integer.parseInt(s);
-        } catch (Throwable throwable) {
-            return ALL_META;
         }
     }
 }

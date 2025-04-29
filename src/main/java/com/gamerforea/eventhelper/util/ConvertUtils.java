@@ -15,6 +15,18 @@ public final class ConvertUtils {
     private static final Method getBukkitEntity;
     private static final Method asCraftMirror;
 
+    static {
+        try {
+            getBukkitEntity = Entity.class.getDeclaredMethod("getBukkitEntity");
+            getBukkitEntity.setAccessible(true);
+
+            asCraftMirror = CraftUtils.getCraftClass("inventory.CraftItemStack").getDeclaredMethod("asCraftMirror", ItemStack.class);
+            asCraftMirror.setAccessible(true);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Failed hooking CraftBukkit methods!", throwable);
+        }
+    }
+
     public static org.bukkit.entity.Entity toBukkitEntity(Entity entity) throws Exception {
         return (org.bukkit.entity.Entity) getBukkitEntity.invoke(entity);
     }
@@ -49,18 +61,6 @@ public final class ConvertUtils {
                 return BlockFace.SELF;
             default:
                 return BlockFace.SELF;
-        }
-    }
-
-    static {
-        try {
-            getBukkitEntity = Entity.class.getDeclaredMethod("getBukkitEntity");
-            getBukkitEntity.setAccessible(true);
-
-            asCraftMirror = CraftUtils.getCraftClass("inventory.CraftItemStack").getDeclaredMethod("asCraftMirror", ItemStack.class);
-            asCraftMirror.setAccessible(true);
-        } catch (Throwable throwable) {
-            throw new RuntimeException("Failed hooking CraftBukkit methods!", throwable);
         }
     }
 }

@@ -12,6 +12,15 @@ import static com.gamerforea.eventhelper.BuildController.isDummyBuild;
 public final class InjectionUtils {
     private static final Method defineClass;
 
+    static {
+        try {
+            defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+            defineClass.setAccessible(true);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Failed hooking ClassLoader.defineClass(String, byte[], int, int) method!", throwable);
+        }
+    }
+
     // Need Inj subclass
     public static Class<?> injectClass(String pluginName, Class<?> clazz) {
         if (isDummyBuild)
@@ -27,15 +36,6 @@ public final class InjectionUtils {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return null;
-        }
-    }
-
-    static {
-        try {
-            defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-            defineClass.setAccessible(true);
-        } catch (Throwable throwable) {
-            throw new RuntimeException("Failed hooking ClassLoader.defineClass(String, byte[], int, int) method!", throwable);
         }
     }
 }

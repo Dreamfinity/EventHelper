@@ -21,10 +21,9 @@ public abstract class FakePlayerContainer {
     private static final String NBT_OWNER_NAME = "eventhelper_fakeName";
     private static final String NBT_OWNER_UUID = "eventhelper_fakeUUID";
     private final GameProfile modFakeProfile;
-    private FakePlayer modFake;
-
     @Nullable
     public GameProfile profile;
+    private FakePlayer modFake;
     private FakePlayer player;
 
     private WeakReference<EntityPlayer> realPlayer;
@@ -43,6 +42,17 @@ public abstract class FakePlayerContainer {
     protected FakePlayerContainer(@Nonnull GameProfile modFakeProfile) {
         Preconditions.checkArgument(modFakeProfile.isComplete(), "modFakeProfile is incomplete");
         this.modFakeProfile = modFakeProfile;
+    }
+
+    private static GameProfile readProfile(NBTTagCompound nbt, String nameKey, String uuidKey) {
+        String name = nbt.getString(nameKey);
+        if (!name.isEmpty()) {
+            String uuid = nbt.getString(uuidKey);
+            if (!uuid.isEmpty())
+                return new GameProfile(UUID.fromString(uuid), name);
+        }
+
+        return null;
     }
 
     public abstract World getWorld();
@@ -150,16 +160,5 @@ public abstract class FakePlayerContainer {
         this.profile = readProfile(nbt, NBT_OWNER_NAME, NBT_OWNER_UUID);
         if (this.profile == null)
             this.profile = readProfile(nbt, "ownerName", "ownerUUID");
-    }
-
-    private static GameProfile readProfile(NBTTagCompound nbt, String nameKey, String uuidKey) {
-        String name = nbt.getString(nameKey);
-        if (!name.isEmpty()) {
-            String uuid = nbt.getString(uuidKey);
-            if (!uuid.isEmpty())
-                return new GameProfile(UUID.fromString(uuid), name);
-        }
-
-        return null;
     }
 }

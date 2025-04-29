@@ -3,12 +3,12 @@ package com.gamerforea.eventhelper.inject;
 public class DummyPluginInjection implements PluginInjection {
     private static final DummyPluginInjection instance = new DummyPluginInjection();
 
-    public static DummyPluginInjection getInstance() {
-        return instance;
-    }
-
     private DummyPluginInjection() {
         // NO-OP
+    }
+
+    public static DummyPluginInjection getInstance() {
+        return instance;
     }
 
     @Override
